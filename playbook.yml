@@ -1,0 +1,45 @@
+- name: Install Flaskex
+  gather_facts: true
+  hosts: all
+  remote_user: root
+
+  tasks: 
+    - name: Install package
+      ansible.builtin.apt:
+        name:
+          - git
+          - python3
+          - python3-pip
+        state: present
+        update_cache: yes 
+
+    - name: Add user
+      ansible.builtin.user:
+        name: usr
+        shell: /bin/bash
+        create_home: true
+
+    - name: Clone Flaskex repository
+      ansible.builtin.git:
+        repo: https://github.com/anfederico/flaskex.git
+        dest: /home/usr/flaskex
+        version: master
+        update: false
+
+    - name: Set permission on usr
+      ansible.builtin.file:
+        path: /home/usr/flaskex
+        state: directory
+        recurse: yes
+        owner: usr
+        group: usr
+
+    - name: Install python packages
+      ansible.builtin.pip:
+        requirements: /home/usr/flaskex/requirements.txt
+        state: present
+        executable: pip3
+    
+    - name: Downgrate WTForms
+      ansible.builtin.pip:
+        name: WTForms==2.3.0
