@@ -1,5 +1,6 @@
 - name: Install Flaskex
   gather_facts: true
+  become: yes
   hosts: all
   remote_user: root
 
